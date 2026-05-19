@@ -62,4 +62,101 @@
         <url>https://github.com/IKE-Network/ike-base-parent</url>
         <tag>HEAD</tag>
     </scm>
+
+    <distributionManagement>
+        <!-- Releases go to Maven Central via JReleaser (jreleaser-maven-plugin
+             config below). This snapshotRepository is only for SNAPSHOT
+             deploys to the internal Nexus. -->
+        <snapshotRepository>
+            <id>ike-snapshots</id>
+            <url>https://nexus.tinkar.org/repository/ike-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <jreleaser-maven-plugin.version>1.24.0</jreleaser-maven-plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <!-- JReleaser — Maven Central upload. Invoked as an explicit goal
+                 (mvn jreleaser:deploy), never bound to a lifecycle phase. This
+                 <configuration> is inherited by every IKE artifact that
+                 inherits ike-base-parent.
+
+                 Release is two-step:
+                   1. mvn deploy -PsignArtifacts \
+                        -DaltDeploymentRepository=local::file://target/staging-deploy
+                      writes signed artifacts to target/staging-deploy
+                   2. mvn jreleaser:deploy
+                      uploads that bundle to the Central Portal
+                 Credentials: JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_USERNAME /
+                 _PASSWORD env vars, supplied via `op run`. -->
+            <plugin>
+                <groupId>org.jreleaser</groupId>
+                <artifactId>jreleaser-maven-plugin</artifactId>
+                <version>${jreleaser-maven-plugin.version}</version>
+                <configuration>
+                    <jreleaser>
+                        <!-- Artifacts are signed by maven-gpg-plugin (Bouncy
+                             Castle) during the staging deploy; JReleaser does
+                             not re-sign. -->
+                        <signing>
+                            <active>NEVER</active>
+                        </signing>
+                        <deploy>
+                            <maven>
+                                <mavenCentral>
+                                    <sonatype>
+                                        <active>RELEASE</active>
+                                        <url>https://central.sonatype.com/api/v1/publisher</url>
+                                        <stagingRepositories>
+                                            <stagingRepository>target/staging-deploy</stagingRepository>
+                                        </stagingRepositories>
+                                        <applyMavenCentralRules>true</applyMavenCentralRules>
+                                        <!-- Artifacts arrive pre-signed (BC);
+                                             do not let the Central rules
+                                             re-sign them. -->
+                                        <sign>false</sign>
+                                    </sonatype>
+                                </mavenCentral>
+                            </maven>
+                        </deploy>
+                    </jreleaser>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Artifact signing for release / staging deploys. Bouncy Castle
+             signer — parallel-safe, no gpg-agent contention. Reads the key
+             from gpg.keyFilePath (settings.xml) and the passphrase from
+             MAVEN_GPG_PASSPHRASE (supplied via `op run`). Activate with
+             -PsignArtifacts on the staging deploy. -->
+        <profile>
+            <id>signArtifacts</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <configuration>
+                            <signer>bc</signer>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
