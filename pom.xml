@@ -81,6 +81,43 @@
 
     <build>
         <plugins>
+            <!-- Maven Site — renders src/site/asciidoc/ into the project's
+                 published site. Lightweight: just enough to build the
+                 one-page Tier 0 site, no ike: release machinery. -->
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.21.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.sentrysoftware.maven</groupId>
+                        <artifactId>maven-skin-tools</artifactId>
+                        <version>1.7.00</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.graalvm.js</groupId>
+                                <artifactId>js</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.graalvm.polyglot</groupId>
+                        <artifactId>polyglot</artifactId>
+                        <version>25.0.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.graalvm.polyglot</groupId>
+                        <artifactId>js</artifactId>
+                        <version>25.0.2</version>
+                        <type>pom</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-parser-doxia-module</artifactId>
+                        <version>3.2.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
             <!-- JReleaser — Maven Central upload. Invoked as an explicit goal
                  (mvn jreleaser:deploy), never bound to a lifecycle phase. This
                  <configuration> is inherited by every IKE artifact that

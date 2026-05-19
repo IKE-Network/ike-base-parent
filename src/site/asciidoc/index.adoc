@@ -1,0 +1,52 @@
+= IKE Base Parent
+
+image:https://img.shields.io/maven-central/v/network.ike/ike-base-parent[Maven Central,link=https://central.sonatype.com/artifact/network.ike/ike-base-parent]
+
+`network.ike:ike-base-parent` is the Tier 0 foundation parent POM for the
+IKE Network — the apex of the IKE parent inheritance forest.
+
+== What it provides
+
+ike-base-parent carries the publishing-layer concerns shared by every IKE
+artifact, and nothing more — it is deliberately thin:
+
+* Publishing metadata — developers, organization, license
+* GPG artifact signing (Bouncy Castle signer)
+* Maven Central deployment configuration (JReleaser)
+
+Build conventions — Java version, compiler, test harness, enforcer — live
+in `ike-parent`, not here.
+
+== The parent tier
+
+[source]
+----
+ike-base-parent              Tier 0  — this POM
+   |-- ike-tooling           Tier 1
+   |-- ike-docs              Tier 1
+   `-- ike-platform          Tier 1
+          `-- ike-parent     Tier 2  — consumer-facing parent
+                 `-- consumers
+----
+
+ike-base-parent sits at the top of the release cascade and is published to
+Maven Central first, so every downstream POM's parent chain resolves cleanly.
+
+== Coordinates
+
+[source,xml]
+----
+<parent>
+    <groupId>network.ike</groupId>
+    <artifactId>ike-base-parent</artifactId>
+    <version>1</version>
+</parent>
+----
+
+Available from Maven Central.
+
+== Projects inheriting ike-base-parent
+
+* link:https://ike.network/ike-tooling/[ike-tooling] — Maven plugins and workspace tooling
+* link:https://ike.network/ike-docs/[ike-docs] — documentation plumbing
+* link:https://ike.network/ike-platform/[ike-platform] — consumer parent (`ike-parent`), BOM, workspace plugin
