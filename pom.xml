@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  IKE Base Parent — Tier 0
+  ════════════════════════
+
+  The foundation parent for the IKE Network: the apex of the parent
+  inheritance forest, inherited by ike-tooling, ike-docs, and
+  ike-platform. It carries shared publishing metadata; GPG signing
+  and Maven Central (JReleaser) configuration are added next, and
+  build conventions migrate in incrementally.
+
+  See the design note dev-parent-tier-architecture (ike-lab-documents)
+  for the tier model and the staged migration plan.
+-->
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0
+         http://maven.apache.org/xsd/maven-4.1.0.xsd"
+         root="true">
+    <modelVersion>4.1.0</modelVersion>
+
+    <groupId>network.ike</groupId>
+    <artifactId>ike-base-parent</artifactId>
+    <version>1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>IKE Base Parent</name>
+    <description>
+        Tier 0 foundation parent for the IKE Network — the apex of the
+        parent inheritance forest, inherited by ike-tooling, ike-docs,
+        and ike-platform. Carries shared publishing metadata, GPG
+        signing, and Maven Central publishing configuration.
+    </description>
+    <url>https://ike.network/ike-base-parent/</url>
+    <inceptionYear>2026</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>IKE Network</name>
+        <url>https://ike.network</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>IKE Network Team</name>
+            <email>dev@ike.network</email>
+            <organization>IKE Network</organization>
+            <organizationUrl>https://ike.network</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/IKE-Network/ike-base-parent.git</connection>
+        <developerConnection>scm:git:git@github.com:IKE-Network/ike-base-parent.git</developerConnection>
+        <url>https://github.com/IKE-Network/ike-base-parent</url>
+        <tag>HEAD</tag>
+    </scm>
+</project>
