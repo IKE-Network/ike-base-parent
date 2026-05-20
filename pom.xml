@@ -71,6 +71,17 @@
             <id>ike-snapshots</id>
             <url>https://nexus.tinkar.org/repository/ike-snapshots/</url>
         </snapshotRepository>
+        <!-- <site> URL for site:stage relative-path computation. Used
+             by ike:site-publish; the actual content is rsync'd to the
+             gh-pages branch of the org-site repo, not deployed via
+             site:deploy. Inheriting projects MUST override this with
+             their own <site> URL (https://ike.network/<artifactId>/),
+             since the inherited template here points at ike-base-parent
+             itself. -->
+        <site>
+            <id>ike-site</id>
+            <url>https://ike.network/ike-base-parent/</url>
+        </site>
     </distributionManagement>
 
     <properties>
