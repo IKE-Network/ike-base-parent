@@ -76,7 +76,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <jreleaser-maven-plugin.version>1.24.0</jreleaser-maven-plugin.version>
+        <!-- Javadoc strictness — defaults align with Maven Central
+             expectations. Inheriting projects can override per-module
+             (e.g. ike-tooling sets failOnWarnings=true). -->
+        <ike.javadoc.doclint>all,-missing</ike.javadoc.doclint>
+        <ike.javadoc.failOnWarnings>false</ike.javadoc.failOnWarnings>
     </properties>
 
     <build>
@@ -189,6 +196,48 @@
                                 <id>sign-artifacts</id>
                                 <phase>verify</phase>
                                 <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Release profile: attach sources + javadoc jars, required by
+             Maven Central. Used by ike:release-publish (`mvn deploy -P
+             release,signArtifacts`). Previously duplicated in each
+             Tier-1 reactor root (ike-tooling, ike-docs, ike-platform);
+             promoted to Tier 0 here so external standalone consumers
+             (ike-workspace-extension, future siblings) get it via
+             inheritance instead of having to redeclare it.
+             See IKE-Network/ike-issues#461. -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals><goal>jar-no-fork</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <doclint>${ike.javadoc.doclint}</doclint>
+                            <failOnWarnings>${ike.javadoc.failOnWarnings}</failOnWarnings>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals><goal>jar</goal></goals>
                             </execution>
                         </executions>
                     </plugin>
