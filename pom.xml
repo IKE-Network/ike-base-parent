@@ -65,8 +65,13 @@
 
     <distributionManagement>
         <!-- Releases go to Maven Central via JReleaser (jreleaser-maven-plugin
-             config below). This snapshotRepository is only for SNAPSHOT
-             deploys to the internal Nexus. -->
+             config below). This <repository> is the internal Nexus mirror
+             — used by `mvn deploy -P release` as a parallel publication
+             target. The Central upload runs through JReleaser separately. -->
+        <repository>
+            <id>ike-staging</id>
+            <url>https://nexus.tinkar.org/repository/ike-staging/</url>
+        </repository>
         <snapshotRepository>
             <id>ike-snapshots</id>
             <url>https://nexus.tinkar.org/repository/ike-snapshots/</url>
