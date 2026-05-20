@@ -27,5 +27,5 @@ canonical_url: https://ike.network/ike-base-parent/summary.html
 | --- | --- |
 | GroupId | network.ike |
 | ArtifactId | ike-base-parent |
-| Version | 2 |
+| Version | 3 |
 | Type | pom |
