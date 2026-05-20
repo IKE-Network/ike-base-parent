@@ -51,4 +51,5 @@ chain resolves cleanly.
 |---|---|
 | [ike-tooling](https://ike.network/ike-tooling/) | Maven plugins and workspace tooling |
 | [ike-docs](https://ike.network/ike-docs/) | Documentation plumbing |
+| [ike-workspace-extension](https://ike.network/ike-workspace-extension/) | Maven 4 build extension — prunes non-existent `<subprojects>` from workspace POMs before model validation |
 | [ike-platform](https://ike.network/ike-platform/) | Consumer parent (`ike-parent`), BOM, workspace plugin |
