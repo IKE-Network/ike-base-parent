@@ -100,6 +100,13 @@
              (e.g. ike-tooling sets failOnWarnings=true). -->
         <ike.javadoc.doclint>all,-missing</ike.javadoc.doclint>
         <ike.javadoc.failOnWarnings>false</ike.javadoc.failOnWarnings>
+        <!-- Opt in to Maven Central publishing through JReleaser.
+             ike-tooling, ike-docs, and ike-platform each declared
+             this property locally; promote to Tier 0 so external
+             standalone consumers default to Central too. Override
+             with -Dike.publishToCentral=false for an internal-only
+             release. -->
+        <ike.publishToCentral>true</ike.publishToCentral>
     </properties>
 
     <build>
