@@ -1,0 +1,34 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0
+          http://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <!--
+        Canonical IKE Forest site theme — site.css + ike-logo.svg.
+        Shipped as a classified attachment on ike-base-parent so
+        every IKE-inheriting project gets the same Maven-Site theme
+        via the file-activated site-resources profile, without
+        crossing into the Tier 1 dependency boundary (ike-tooling).
+
+        Used by: ike-base-parent's own site-resources profile, plus
+        any consumer that depends on
+            network.ike:ike-base-parent:<v>:site-theme:zip
+        directly. Inherits-from-ike-parent projects pick it up
+        transparently because ike-parent's site-resources profile
+        consumes this artifact.
+
+        Replaces ike-tooling/ike-build-standards:site-theme (kept for
+        back-compat one cycle; see #464).
+    -->
+    <id>site-theme</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/site-theme</directory>
+            <outputDirectory>/</outputDirectory>
+            <useDefaultExcludes>false</useDefaultExcludes>
+        </fileSet>
+    </fileSets>
+</assembly>

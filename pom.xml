@@ -94,7 +94,20 @@
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <jreleaser-maven-plugin.version>1.24.0</jreleaser-maven-plugin.version>
+
+        <!-- Latest RELEASED ike-base-parent version. The site-resources
+             profile (below, inherited by every consumer of this parent)
+             depends on the classified site-theme attachment at this
+             version. Maven 4's strict POM-model validator rejects
+             `${project.parent.version}` in a dependency version, so we
+             pin to a literal here and bump it as part of each
+             ike-base-parent release. One-cycle lag is acceptable for
+             theme content — it changes rarely. -->
+        <ike-base-parent.version>4</ike-base-parent.version>
         <!-- Javadoc strictness — defaults align with Maven Central
              expectations. Inheriting projects can override per-module
              (e.g. ike-tooling sets failOnWarnings=true). -->
@@ -111,6 +124,73 @@
 
     <build>
         <plugins>
+            <!-- maven-assembly-plugin: produce the canonical IKE Forest
+                 site-theme as a classified attachment on ike-base-parent
+                 itself. The descriptor (src/assembly/site-theme.xml) and
+                 the source content (src/main/site-theme/) live only in
+                 this repo — `<inherited>false</inherited>` keeps every
+                 child from attempting to build its own copy.
+
+                 Replaces ike-tooling/ike-build-standards:site-theme. The
+                 old artifact stays one cycle for back-compat (see #464).
+                 Putting this in Tier 0 eliminates the Tier 0 → Tier 1
+                 dep that ike-workspace-extension and ike-base-parent's
+                 own site-resources workaround used to need. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>site-theme</id>
+                        <phase>package</phase>
+                        <goals><goal>single</goal></goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/site-theme.xml</descriptor>
+                            </descriptors>
+                            <attach>true</attach>
+                            <appendAssemblyId>true</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-resources-plugin: copy ike-base-parent's OWN
+                 site-theme content into its OWN site at pre-site.
+                 The site-resources profile below depends on the
+                 classified-zip attachment to populate inheriting
+                 projects' sites, but ike-base-parent itself can't
+                 depend on its own un-released SNAPSHOT artifact —
+                 chicken-and-egg. Inlining the file copy here cuts
+                 the loop.
+
+                 `<inherited>false</inherited>`: only runs for
+                 ike-base-parent's own site build. Children get the
+                 same content via the site-resources profile's
+                 classified-zip unpack. -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>copy-own-site-theme</id>
+                        <phase>pre-site</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-site/resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/site-theme</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Maven Site — renders src/site/asciidoc/ into the project's
                  published site. Lightweight: just enough to build the
                  one-page Tier 0 site, no ike: release machinery. -->
@@ -198,6 +278,87 @@
     </build>
 
     <profiles>
+        <!-- ── site-resources ───────────────────────────────────────── -->
+        <!-- File-activated when src/site exists AND src/main/site-theme
+             does NOT (i.e., the consuming project doesn't ship its own
+             theme source). Unpacks ike-base-parent's classified
+             site-theme attachment into target/generated-site/resources/
+             at pre-site, which Maven Site merges into target/site at
+             site:site time.
+
+             ike-base-parent itself DOES have src/main/site-theme/ —
+             so this profile doesn't fire for ike-base-parent's own
+             build, sidestepping the self-reference SNAPSHOT
+             resolution problem. ike-base-parent's own theme is
+             copied by the inherited=false maven-resources-plugin
+             execution in <build><plugins> above.
+
+             Every IKE-inheriting project that has src/site gets the
+             theme automatically: ike-tooling/ike-docs/ike-platform
+             (Tier 1), ike-workspace-extension, the workspace
+             aggregators, and the example templates. No per-project
+             workaround needed (#464). -->
+        <profile>
+            <id>site-resources</id>
+            <activation>
+                <!-- Activated when the consuming project does NOT ship
+                     its own site-theme source. ike-base-parent itself
+                     has src/main/site-theme/ (the canonical content);
+                     every other consumer doesn't, so this profile
+                     fires for them. Maven 4 honors only one of
+                     <exists>/<missing> in a single <file> activation,
+                     so we gate on the more selective one. The
+                     unpack-dependencies execution runs at pre-site
+                     and is a no-op when src/site is absent. -->
+                <file>
+                    <missing>src/main/site-theme</missing>
+                </file>
+            </activation>
+
+            <dependencies>
+                <!-- The classified site-theme zip lives on Maven
+                     Central at the most-recently-released
+                     ike-base-parent version (literal in the
+                     ${ike-base-parent.version} property above).
+                     Bumped per release; theme content rarely
+                     changes so one-cycle lag is acceptable. -->
+                <dependency>
+                    <groupId>network.ike</groupId>
+                    <artifactId>ike-base-parent</artifactId>
+                    <version>${ike-base-parent.version}</version>
+                    <classifier>site-theme</classifier>
+                    <type>zip</type>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${maven-dependency-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>unpack-site-theme</id>
+                                <phase>pre-site</phase>
+                                <goals><goal>unpack-dependencies</goal></goals>
+                                <configuration>
+                                    <includeGroupIds>network.ike</includeGroupIds>
+                                    <includeArtifactIds>ike-base-parent</includeArtifactIds>
+                                    <includeClassifiers>site-theme</includeClassifiers>
+                                    <includeTypes>zip</includeTypes>
+                                    <outputDirectory>${project.build.directory}/generated-site/resources</outputDirectory>
+                                    <overWriteReleases>true</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- Artifact signing for release / staging deploys. Bouncy Castle
              signer — parallel-safe, no gpg-agent contention. Reads the key
              from gpg.keyFilePath (settings.xml) and the passphrase from
