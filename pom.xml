@@ -107,7 +107,7 @@
              pin to a literal here and bump it as part of each
              ike-base-parent release. One-cycle lag is acceptable for
              theme content — it changes rarely. -->
-        <ike-base-parent.version>4</ike-base-parent.version>
+        <ike-base-parent.version>5</ike-base-parent.version>
         <!-- Javadoc strictness — defaults align with Maven Central
              expectations. Inheriting projects can override per-module
              (e.g. ike-tooling sets failOnWarnings=true). -->
