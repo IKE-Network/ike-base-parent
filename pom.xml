@@ -100,7 +100,7 @@
              pin to a literal here and bump it as part of each
              ike-base-parent release. One-cycle lag is acceptable for
              theme content — it changes rarely. -->
-        <ike-base-parent.version>7</ike-base-parent.version>
+        <ike-base-parent.version>8</ike-base-parent.version>
         <!-- Javadoc strictness — defaults align with Maven Central
              expectations. Inheriting projects can override per-module
              (e.g. ike-tooling sets failOnWarnings=true). -->
@@ -137,13 +137,44 @@
              use the extension without inheriting this parent. -->
 
         <!-- IKE foundation (Tier 0 / Tier 1) -->
-        <network.ike·ike-base-parent>8</network.ike·ike-base-parent>
+        <network.ike·ike-base-parent>9</network.ike·ike-base-parent>
         <network.ike·ike-java-support>1</network.ike·ike-java-support>
-        <network.ike.tooling·ike-tooling>199</network.ike.tooling·ike-tooling>
+        <network.ike.tooling·ike-tooling>200</network.ike.tooling·ike-tooling>
         <network.ike.tooling·ike-workspace-extension>4</network.ike.tooling·ike-workspace-extension>
         <network.ike.tooling·ike-version-management-extension>1</network.ike.tooling·ike-version-management-extension>
-        <network.ike.docs·ike-docs>53</network.ike.docs·ike-docs>
-        <network.ike.platform·ike-platform>83</network.ike.platform·ike-platform>
+        <network.ike.docs·ike-docs>54</network.ike.docs·ike-docs>
+        <network.ike.platform·ike-platform>84</network.ike.platform·ike-platform>
+
+        <!-- ═══════════════════════════════════════════════════════
+             Release-policy defaults (IKE-Network/ike-issues#498)
+             ═══════════════════════════════════════════════════════
+
+             For each canonical version pin above, a paired
+             ${G·A·policy} property declares how a consumer of this
+             parent reacts when that upstream releases. The default
+             `integrate` matches the historical behavior — bump the
+             pin in place, no human gate. Consumers override per-
+             upstream by redeclaring the property locally.
+
+             The ReleasePolicy ladder (in network.ike:ike-java-support):
+               notify     log only
+               verify     log + verify the consumer still builds
+               propose    open a proposal branch with the bump
+               integrate  bump the pin (current implicit behavior)
+               release    bump + trigger the consumer's own release
+
+             ike-version-management-extension validates the value
+             against the enum at build time; an unrecognized value
+             fails the build with a "did you mean" hint.
+             ReleasePrep.alignUpstreamProperties dispatches on the
+             value at release time. -->
+        <network.ike·ike-base-parent·policy>integrate</network.ike·ike-base-parent·policy>
+        <network.ike·ike-java-support·policy>integrate</network.ike·ike-java-support·policy>
+        <network.ike.tooling·ike-tooling·policy>integrate</network.ike.tooling·ike-tooling·policy>
+        <network.ike.tooling·ike-workspace-extension·policy>integrate</network.ike.tooling·ike-workspace-extension·policy>
+        <network.ike.tooling·ike-version-management-extension·policy>integrate</network.ike.tooling·ike-version-management-extension·policy>
+        <network.ike.docs·ike-docs·policy>integrate</network.ike.docs·ike-docs·policy>
+        <network.ike.platform·ike-platform·policy>integrate</network.ike.platform·ike-platform·policy>
 
         <!-- Test stack -->
         <org.junit.jupiter·junit-jupiter>6.0.0</org.junit.jupiter·junit-jupiter>
