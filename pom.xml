@@ -100,7 +100,7 @@
              pin to a literal here and bump it as part of each
              ike-base-parent release. One-cycle lag is acceptable for
              theme content — it changes rarely. -->
-        <ike-base-parent.version>6</ike-base-parent.version>
+        <ike-base-parent.version>7</ike-base-parent.version>
         <!-- Javadoc strictness — defaults align with Maven Central
              expectations. Inheriting projects can override per-module
              (e.g. ike-tooling sets failOnWarnings=true). -->
@@ -137,12 +137,13 @@
              use the extension without inheriting this parent. -->
 
         <!-- IKE foundation (Tier 0 / Tier 1) -->
-        <network.ike·ike-base-parent>7</network.ike·ike-base-parent>
-        <network.ike.tooling·ike-tooling>194</network.ike.tooling·ike-tooling>
+        <network.ike·ike-base-parent>8</network.ike·ike-base-parent>
+        <network.ike·ike-java-support>1</network.ike·ike-java-support>
+        <network.ike.tooling·ike-tooling>199</network.ike.tooling·ike-tooling>
         <network.ike.tooling·ike-workspace-extension>4</network.ike.tooling·ike-workspace-extension>
         <network.ike.tooling·ike-version-management-extension>1</network.ike.tooling·ike-version-management-extension>
-        <network.ike.docs·ike-docs>50</network.ike.docs·ike-docs>
-        <network.ike.platform·ike-platform>80</network.ike.platform·ike-platform>
+        <network.ike.docs·ike-docs>53</network.ike.docs·ike-docs>
+        <network.ike.platform·ike-platform>83</network.ike.platform·ike-platform>
 
         <!-- Test stack -->
         <org.junit.jupiter·junit-jupiter>6.0.0</org.junit.jupiter·junit-jupiter>
@@ -197,6 +198,7 @@
         <ike-tooling.version>${network.ike.tooling·ike-tooling}</ike-tooling.version>
         <ike-workspace-extension.version>${network.ike.tooling·ike-workspace-extension}</ike-workspace-extension.version>
         <ike-version-management-extension.version>${network.ike.tooling·ike-version-management-extension}</ike-version-management-extension.version>
+        <ike-java-support.version>${network.ike·ike-java-support}</ike-java-support.version>
         <ike-docs.version>${network.ike.docs·ike-docs}</ike-docs.version>
         <ike-platform.version>${network.ike.platform·ike-platform}</ike-platform.version>
 
