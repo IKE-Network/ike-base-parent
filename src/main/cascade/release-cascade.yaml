@@ -9,11 +9,9 @@
 # Declaring those upstreams here lets `alignUpstreamProperties`
 # (ReleasePrep B8) auto-bump the stale canonical pins to the
 # latest released version on every ike-base-parent release. The
-# canonical pin names (with U+00B7 MIDDLE DOT) are referenced
-# directly as `version-property:` — not the short-name aliases —
-# because alignUpstreamProperties currently skips any property
-# whose value contains `${`, so pointing at the alias indirection
-# would no-op the alignment.
+# canonical ${G·A} pin name (U+00B7) is derived mechanically from
+# each upstream's groupId/artifactId — no version-property field
+# is needed (IKE-Network/ike-issues#496).
 #
 # This file has no `downstream:` block: ike-base-parent is
 # terminal in the cascade-walk direction (everything depends ON
@@ -28,25 +26,19 @@ terminal: true
 upstream:
   - groupId: network.ike
     artifactId: ike-java-support
-    version-property: network.ike·ike-java-support
     url: https://github.com/IKE-Network/ike-java-support.git
   - groupId: network.ike.tooling
     artifactId: ike-tooling
-    version-property: network.ike.tooling·ike-tooling
     url: https://github.com/IKE-Network/ike-tooling.git
   - groupId: network.ike.tooling
     artifactId: ike-workspace-extension
-    version-property: network.ike.tooling·ike-workspace-extension
     url: https://github.com/IKE-Network/ike-workspace-extension.git
   - groupId: network.ike.tooling
     artifactId: ike-version-management-extension
-    version-property: network.ike.tooling·ike-version-management-extension
     url: https://github.com/IKE-Network/ike-version-management-extension.git
   - groupId: network.ike.docs
     artifactId: ike-docs
-    version-property: network.ike.docs·ike-docs
     url: https://github.com/IKE-Network/ike-docs.git
   - groupId: network.ike.platform
     artifactId: ike-platform
-    version-property: network.ike.platform·ike-platform
     url: https://github.com/IKE-Network/ike-platform.git
