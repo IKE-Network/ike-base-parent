@@ -138,12 +138,12 @@
 
         <!-- IKE foundation (Tier 0 / Tier 1) -->
         <network.ike·ike-base-parent>9</network.ike·ike-base-parent>
-        <network.ike·ike-java-support>1</network.ike·ike-java-support>
-        <network.ike.tooling·ike-tooling>200</network.ike.tooling·ike-tooling>
+        <network.ike·ike-java-support>2</network.ike·ike-java-support>
+        <network.ike.tooling·ike-tooling>207</network.ike.tooling·ike-tooling>
         <network.ike.tooling·ike-workspace-extension>4</network.ike.tooling·ike-workspace-extension>
-        <network.ike.tooling·ike-version-management-extension>1</network.ike.tooling·ike-version-management-extension>
-        <network.ike.docs·ike-docs>54</network.ike.docs·ike-docs>
-        <network.ike.platform·ike-platform>84</network.ike.platform·ike-platform>
+        <network.ike.tooling·ike-version-management-extension>2</network.ike.tooling·ike-version-management-extension>
+        <network.ike.docs·ike-docs>56</network.ike.docs·ike-docs>
+        <network.ike.platform·ike-platform>86</network.ike.platform·ike-platform>
 
         <!-- ═══════════════════════════════════════════════════════
              Release-policy defaults (IKE-Network/ike-issues#498)
