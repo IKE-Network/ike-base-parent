@@ -23,11 +23,14 @@ live in `ike-parent`, not here.
 ## The parent tier
 
 ```
-ike-base-parent              Tier 0  — this POM
-   ├── ike-tooling           Tier 1
-   ├── ike-docs              Tier 1
-   └── ike-platform          Tier 1
-          └── ike-parent     Tier 2  — consumer-facing parent
+ike-base-parent                            Tier 0  — this POM
+   ├── ike-java-support                    Tier 0  — value types
+   ├── ike-workspace-extension             Tier 0  — Maven 4 ext
+   ├── ike-version-management-extension    Tier 0  — Maven 4 ext
+   ├── ike-tooling                         Tier 1
+   ├── ike-docs                            Tier 1
+   └── ike-platform                        Tier 1
+          └── ike-parent                   Tier 2  — consumer-facing
                  └── consumers
 ```
 
@@ -47,9 +50,14 @@ chain resolves cleanly.
 
 ## Projects inheriting ike-base-parent
 
+In dependency-direction order (upstream → downstream):
+
 | Project | Role |
 |---|---|
+| [ike-java-support](https://ike.network/ike-java-support/) | Tier-0 enforced-zero-dependency value types (ConstantBackedEnum, EnumDefinition, ReleasePolicy) |
 | [ike-tooling](https://ike.network/ike-tooling/) | Maven plugins and workspace tooling |
 | [ike-docs](https://ike.network/ike-docs/) | Documentation plumbing |
 | [ike-workspace-extension](https://ike.network/ike-workspace-extension/) | Maven 4 build extension — prunes non-existent `<subprojects>` from workspace POMs before model validation |
+| [ike-version-management-extension](https://ike.network/ike-version-management-extension/) | Maven 4 build extension — implements the `${G·A}` (U+00B7) version-property convention and the release-policy validation rule |
+| [ike-platform](https://ike.network/ike-platform/) | Consumer parent (`ike-parent`), BOM, workspace plugin |
 | [ike-platform](https://ike.network/ike-platform/) | Consumer parent (`ike-parent`), BOM, workspace plugin |
