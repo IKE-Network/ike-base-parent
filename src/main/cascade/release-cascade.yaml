@@ -1,44 +1,21 @@
 # release-cascade.yaml — ike-base-parent's edges in the IKE release
-# cascade (IKE-Network/ike-issues#420, #498).
+# cascade (IKE-Network/ike-issues#420, #498, #526).
 #
-# ike-base-parent is the Tier 0 apex parent: every IKE foundation
-# repo (ike-tooling, ike-docs, ike-platform) inherits it, and it
-# version-controls the canonical ${G·A} pins for every foundation
-# upstream — see <properties> in pom.xml.
+# Empty upstream list after #526: the IKE-foundation version pins
+# (ike-tooling, ike-docs, ike-platform, etc.) moved out of
+# ike-base-parent and into ike-parent, where they belong as
+# consumer-facing registry. ike-base-parent is now upstream of
+# everyone with no IKE-foundation pins of its own — it carries only
+# its self-pin and the external-dependency matrix (test stack,
+# Eclipse Collections, logging, Maven plugin matrix).
 #
-# Declaring those upstreams here lets `alignUpstreamProperties`
-# (ReleasePrep B8) auto-bump the stale canonical pins to the
-# latest released version on every ike-base-parent release. The
-# canonical ${G·A} pin name (U+00B7) is derived mechanically from
-# each upstream's groupId/artifactId — no version-property field
-# is needed (IKE-Network/ike-issues#496).
-#
-# This file has no `downstream:` block: ike-base-parent is
-# terminal in the cascade-walk direction (everything depends ON
-# it; it depends on nothing in the cascade-execution sense).
-# It IS depended on by every foundation repo, but the cascade
-# walker follows the foundation-cascade edges (ike-tooling →
-# ike-docs → ike-platform), not the parent-inheritance edges.
+# This file has no `downstream:` block either: ike-base-parent is
+# terminal in the cascade-walk direction (everything depends ON it;
+# it depends on nothing in the cascade-execution sense). It IS
+# depended on by every foundation repo, but the cascade walker
+# follows the foundation-cascade edges (ike-tooling → ike-docs →
+# ike-platform), not the parent-inheritance edges.
 
 schema: 1
 terminal: true
-
-upstream:
-  - groupId: network.ike
-    artifactId: ike-java-support
-    url: https://github.com/IKE-Network/ike-java-support.git
-  - groupId: network.ike.tooling
-    artifactId: ike-tooling
-    url: https://github.com/IKE-Network/ike-tooling.git
-  - groupId: network.ike.tooling
-    artifactId: ike-workspace-extension
-    url: https://github.com/IKE-Network/ike-workspace-extension.git
-  - groupId: network.ike.tooling
-    artifactId: ike-version-management-extension
-    url: https://github.com/IKE-Network/ike-version-management-extension.git
-  - groupId: network.ike.docs
-    artifactId: ike-docs
-    url: https://github.com/IKE-Network/ike-docs.git
-  - groupId: network.ike.platform
-    artifactId: ike-platform
-    url: https://github.com/IKE-Network/ike-platform.git
+upstream: []
