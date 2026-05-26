@@ -16,7 +16,8 @@ This document provides an overview of the various documents and links that are p
 | [Distribution Management](distribution-management.html)[3] | This document provides informations on the distribution management of this project. |
 | [About](index.html)[4] | Tier 0 foundation parent for the IKE Network — the apex of the parent inheritance forest, inherited by ike-tooling, ike-docs, and ike-platform. Carries shared publishing metadata, GPG signing, and Maven Central publishing configuration. |
 | [Licenses](licenses.html)[5] | This document lists the project license(s). |
-| [Plugins](plugins.html)[6] | This document lists the build plugins and the report plugins used by this project. |
-| [Source Code Management](scm.html)[7] | This document lists ways to access the online source repository. |
-| [Summary](summary.html)[8] | This document lists other related information of this project |
-| [Team](team.html)[9] | This document provides information on the members of this project. These are the individuals who have contributed to the project in one form or another. |
+| [Plugin Management](plugin-management.html)[6] | This document lists the plugins that are defined through pluginManagement. |
+| [Plugins](plugins.html)[7] | This document lists the build plugins and the report plugins used by this project. |
+| [Source Code Management](scm.html)[8] | This document lists ways to access the online source repository. |
+| [Summary](summary.html)[9] | This document lists other related information of this project |
+| [Team](team.html)[10] | This document provides information on the members of this project. These are the individuals who have contributed to the project in one form or another. |

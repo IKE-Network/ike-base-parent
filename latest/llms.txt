@@ -17,6 +17,7 @@
 - [Maven Coordinates](https://ike.network/ike-base-parent/dependency-info.html.md)
 - [Project Distribution Management](https://ike.network/ike-base-parent/distribution-management.html.md)
 - [Project Licenses](https://ike.network/ike-base-parent/licenses.html.md)
+- [Project Plugin Management](https://ike.network/ike-base-parent/plugin-management.html.md)
 - [Project Plugins](https://ike.network/ike-base-parent/plugins.html.md)
 - [Source Code Management](https://ike.network/ike-base-parent/scm.html.md)
 - [Project Summary](https://ike.network/ike-base-parent/summary.html.md)
