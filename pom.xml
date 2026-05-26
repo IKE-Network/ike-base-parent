@@ -265,23 +265,171 @@
     </properties>
 
     <build>
-        <plugins>
-            <!-- maven-assembly-plugin: produce the canonical IKE Forest
-                 site-theme as a classified attachment on ike-base-parent
-                 itself. The descriptor (src/assembly/site-theme.xml) and
-                 the source content (src/main/site-theme/) live only in
-                 this repo — `<inherited>false</inherited>` keeps every
-                 child from attempting to build its own copy.
+        <!-- ════════════════════════════════════════════════════════════════
+             Plugin Management — version pins and default config (#523)
+             ════════════════════════════════════════════════════════════════
 
-                 Replaces ike-tooling/ike-build-standards:site-theme. The
-                 old artifact stays one cycle for back-compat (see #464).
-                 Putting this in Tier 0 eliminates the Tier 0 → Tier 1
-                 dep that ike-workspace-extension and ike-base-parent's
-                 own site-resources workaround used to need. -->
+             Principle: version pinning belongs in <pluginManagement>;
+             execution binding belongs in <build><plugins>. Never both
+             in the same element. Mixing them in active <plugins> with
+             plugin-level <inherited>false</inherited> conflates two
+             separate intents and drops the version pin alongside the
+             executions for descendants.
+
+             <pluginManagement> is declarative and propagates to every
+             descendant's effective POM regardless of <inherited>
+             markers; <build><plugins> activates plugin executions in
+             the current project. For parent-only executions, use
+             plugin-level or execution-level <inherited>false</inherited>
+             on the active entry — the version pin is unaffected
+             because it lives here. -->
+        <pluginManagement>
+            <plugins>
+                <!-- maven-assembly-plugin: version pin. The active
+                     entry in <build><plugins> below activates the
+                     parent-only site-theme and aliases executions
+                     (<inherited>false</inherited>). Descendants that
+                     use maven-assembly-plugin for their own purposes
+                     pick up this version via pluginManagement
+                     inheritance. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+
+                <!-- maven-resources-plugin: version pin. The active
+                     entry below runs the parent-only
+                     copy-own-site-theme execution. Descendants that
+                     need maven-resources-plugin pick up this version
+                     via pluginManagement inheritance. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+
+                <!-- Maven Site — renders src/site/asciidoc/ into the
+                     project's published site. Doxia AsciiDoctor module
+                     + Sentry skin tools + GraalVM polyglot dependencies
+                     live here so every descendant invoking site:site
+                     picks up the same skin/parser stack via
+                     pluginManagement inheritance. No active <plugins>
+                     entry needed because site:site is invoked
+                     explicitly, not phase-bound. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.sentrysoftware.maven</groupId>
+                            <artifactId>maven-skin-tools</artifactId>
+                            <version>1.7.00</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.graalvm.js</groupId>
+                                    <artifactId>js</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.graalvm.polyglot</groupId>
+                            <artifactId>polyglot</artifactId>
+                            <version>25.0.2</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.graalvm.polyglot</groupId>
+                            <artifactId>js</artifactId>
+                            <version>25.0.2</version>
+                            <type>pom</type>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctor-parser-doxia-module</artifactId>
+                            <version>3.2.0</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <!-- JReleaser — Maven Central upload. Invoked as an
+                     explicit goal (mvn jreleaser:deploy), never bound
+                     to a lifecycle phase. <configuration> here is
+                     inherited by every IKE artifact that inherits
+                     ike-base-parent via pluginManagement.
+
+                     Release is two-step:
+                       1. mvn deploy -PsignArtifacts \
+                            -DaltDeploymentRepository=local::file://target/staging-deploy
+                          writes signed artifacts to target/staging-deploy
+                       2. mvn jreleaser:deploy
+                          uploads that bundle to the Central Portal
+                     Credentials: JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_USERNAME /
+                     _PASSWORD env vars, supplied via `op run`. -->
+                <plugin>
+                    <groupId>org.jreleaser</groupId>
+                    <artifactId>jreleaser-maven-plugin</artifactId>
+                    <version>${jreleaser-maven-plugin.version}</version>
+                    <configuration>
+                        <jreleaser>
+                            <!-- Artifacts are signed by maven-gpg-plugin
+                                 (Bouncy Castle) during the staging deploy;
+                                 JReleaser does not re-sign. -->
+                            <signing>
+                                <active>NEVER</active>
+                            </signing>
+                            <deploy>
+                                <maven>
+                                    <mavenCentral>
+                                        <sonatype>
+                                            <active>RELEASE</active>
+                                            <url>https://central.sonatype.com/api/v1/publisher</url>
+                                            <stagingRepositories>
+                                                <stagingRepository>target/staging-deploy</stagingRepository>
+                                            </stagingRepositories>
+                                            <applyMavenCentralRules>true</applyMavenCentralRules>
+                                            <!-- Artifacts arrive pre-signed (BC);
+                                                 do not let the Central rules
+                                                 re-sign them. -->
+                                            <sign>false</sign>
+                                        </sonatype>
+                                    </mavenCentral>
+                                </maven>
+                            </deploy>
+                        </jreleaser>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <!-- ════════════════════════════════════════════════════════════════
+             Active Plugins — executions only, no version pinning (#523)
+             ════════════════════════════════════════════════════════════════
+
+             Only plugins with parent-bound executions appear here. Each
+             entry references the plugin by GAV (no <version> — inherits
+             from pluginManagement). Plugin-level
+             <inherited>false</inherited> is set when every execution is
+             parent-only — no point cluttering descendants' effective
+             POMs with a dead active entry — and is now safe because
+             the version pin lives in pluginManagement above. -->
+        <plugins>
+            <!-- maven-assembly-plugin: parent-only executions. Produces
+                 the canonical IKE Forest site-theme + aliases manifest
+                 as classified attachments on ike-base-parent itself.
+                 Descriptors (src/assembly/site-theme.xml,
+                 src/assembly/aliases.xml) and the source content
+                 (src/main/site-theme/) live only in this repo.
+
+                 Replaces ike-tooling/ike-build-standards:site-theme.
+                 The old artifact stays one cycle for back-compat
+                 (see #464). Putting this in Tier 0 eliminates the
+                 Tier 0 → Tier 1 dep that ike-workspace-extension
+                 and ike-base-parent's own site-resources workaround
+                 used to need. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
                 <inherited>false</inherited>
                 <executions>
                     <execution>
@@ -317,22 +465,20 @@
                 </executions>
             </plugin>
 
-            <!-- maven-resources-plugin: copy ike-base-parent's OWN
-                 site-theme content into its OWN site at pre-site.
-                 The site-resources profile below depends on the
-                 classified-zip attachment to populate inheriting
-                 projects' sites, but ike-base-parent itself can't
-                 depend on its own un-released SNAPSHOT artifact —
-                 chicken-and-egg. Inlining the file copy here cuts
-                 the loop.
-
-                 `<inherited>false</inherited>`: only runs for
-                 ike-base-parent's own site build. Children get the
-                 same content via the site-resources profile's
-                 classified-zip unpack. -->
+            <!-- maven-resources-plugin: parent-only execution.
+                 Copies ike-base-parent's OWN site-theme content
+                 into its OWN site at pre-site. The site-resources
+                 profile below depends on the classified-zip
+                 attachment to populate inheriting projects' sites,
+                 but ike-base-parent itself can't depend on its
+                 own un-released SNAPSHOT artifact —
+                 chicken-and-egg. Inlining the file copy here
+                 cuts the loop. Children get the same content via
+                 the site-resources profile's classified-zip
+                 unpack. -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
                 <inherited>false</inherited>
                 <executions>
                     <execution>
@@ -349,90 +495,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- Maven Site — renders src/site/asciidoc/ into the project's
-                 published site. Lightweight: just enough to build the
-                 one-page Tier 0 site, no ike: release machinery. -->
-            <plugin>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.21.0</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.sentrysoftware.maven</groupId>
-                        <artifactId>maven-skin-tools</artifactId>
-                        <version>1.7.00</version>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>org.graalvm.js</groupId>
-                                <artifactId>js</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.graalvm.polyglot</groupId>
-                        <artifactId>polyglot</artifactId>
-                        <version>25.0.2</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.graalvm.polyglot</groupId>
-                        <artifactId>js</artifactId>
-                        <version>25.0.2</version>
-                        <type>pom</type>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-parser-doxia-module</artifactId>
-                        <version>3.2.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <!-- JReleaser — Maven Central upload. Invoked as an explicit goal
-                 (mvn jreleaser:deploy), never bound to a lifecycle phase. This
-                 <configuration> is inherited by every IKE artifact that
-                 inherits ike-base-parent.
-
-                 Release is two-step:
-                   1. mvn deploy -PsignArtifacts \
-                        -DaltDeploymentRepository=local::file://target/staging-deploy
-                      writes signed artifacts to target/staging-deploy
-                   2. mvn jreleaser:deploy
-                      uploads that bundle to the Central Portal
-                 Credentials: JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_USERNAME /
-                 _PASSWORD env vars, supplied via `op run`. -->
-            <plugin>
-                <groupId>org.jreleaser</groupId>
-                <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>${jreleaser-maven-plugin.version}</version>
-                <configuration>
-                    <jreleaser>
-                        <!-- Artifacts are signed by maven-gpg-plugin (Bouncy
-                             Castle) during the staging deploy; JReleaser does
-                             not re-sign. -->
-                        <signing>
-                            <active>NEVER</active>
-                        </signing>
-                        <deploy>
-                            <maven>
-                                <mavenCentral>
-                                    <sonatype>
-                                        <active>RELEASE</active>
-                                        <url>https://central.sonatype.com/api/v1/publisher</url>
-                                        <stagingRepositories>
-                                            <stagingRepository>target/staging-deploy</stagingRepository>
-                                        </stagingRepositories>
-                                        <applyMavenCentralRules>true</applyMavenCentralRules>
-                                        <!-- Artifacts arrive pre-signed (BC);
-                                             do not let the Central rules
-                                             re-sign them. -->
-                                        <sign>false</sign>
-                                    </sonatype>
-                                </mavenCentral>
-                            </maven>
-                        </deploy>
-                    </jreleaser>
-                </configuration>
             </plugin>
         </plugins>
     </build>
