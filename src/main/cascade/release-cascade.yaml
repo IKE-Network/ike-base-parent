@@ -18,4 +18,5 @@
 
 schema: 1
 terminal: true
+head: true
 upstream: []
