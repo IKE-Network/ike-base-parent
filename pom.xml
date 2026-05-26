@@ -92,15 +92,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Latest RELEASED ike-base-parent version. The site-resources
-             profile (below, inherited by every consumer of this parent)
-             depends on the classified site-theme attachment at this
-             version. Maven 4's strict POM-model validator rejects
-             `${project.parent.version}` in a dependency version, so we
-             pin to a literal here and bump it as part of each
-             ike-base-parent release. One-cycle lag is acceptable for
-             theme content — it changes rarely. -->
-        <ike-base-parent.version>8</ike-base-parent.version>
         <!-- Javadoc strictness — defaults align with Maven Central
              expectations. Inheriting projects can override per-module
              (e.g. ike-tooling sets failOnWarnings=true). -->
@@ -115,166 +106,100 @@
         <ike.publishToCentral>true</ike.publishToCentral>
 
         <!-- ═══════════════════════════════════════════════════════
-             IKE typed-marker family: canonical version-property pins
+             IKE typed-marker family — declarative-only registry
              ═══════════════════════════════════════════════════════
 
-             The IKE Network's canonical version registry. A version
-             pin is named <groupId>__GA__<artifactId>__VERSION; a
-             release policy on the same coordinate is
-             <groupId>__GA__<artifactId>__POLICY. The convention's
-             rule: __ is a separator between adjacent name-parts;
-             trailing __ only appears when something follows; the
-             XML structural terminator (> for declarations, } for
-             references) closes the final segment. See
-             IKE-VERSIONS.md (in ike-tooling/ike-build-standards)
-             and IKE-Network/ike-issues#470, #473, #525.
+             The convention's rule: __ is a separator between
+             adjacent name-parts; trailing __ only appears when
+             something follows; the XML structural terminator (>
+             for declarations, } for references) closes the final
+             segment. See IKE-VERSIONS.md (in ike-tooling/
+             ike-build-standards) and IKE-Network/ike-issues#470,
+             #473, #525, #526.
 
-             Replaced the pre-#525 U+00B7 MIDDLE DOT (·) separator
-             after IntelliJ's narrower property-resolver regex was
-             found to reject it. The typed-marker family stays
-             inside every resolver's identifier regex while
-             remaining self-documenting and greppable (e.g.
-             grep -E '__VERSION[>}]').
+             Each artifact gets up to three typed-marker properties:
+             - <G>__GA__<A>__VERSION : the version pin
+             - <G>__GA__<A>__POLICY  : the release policy
+             - <G>__GA__<A>__ALIAS   : comma-separated legacy
+               short-names that the artifact also goes by
 
-             Inheriting projects reference any pin below as:
-                 <version>${network.ike.tooling__GA__ike-tooling__VERSION}</version>
-             without declaring anything locally. Legacy short-name
-             aliases below provide one-line indirections so
-             existing references keep working unchanged.
+             Hand-written legacy short-name indirection lines
+             (e.g. <ike-base-parent.version>${...}</...>) are NOT
+             declared in this source pom. release-publish bakes
+             them into the deployed pom from the __ALIAS metadata
+             (IKE-Network/ike-issues#527 round-trip), and vm-ext
+             injects them at file-model stage for workspace builds
+             during the SNAPSHOT cycle.
 
-             The same data is shipped as the `aliases` classified
-             attachment on this artifact (src/main/aliases/
-             version-aliases.yaml), and bundled inside
-             ike-version-management-extension for projects that
-             use the extension without inheriting this parent. -->
+             Pin scope after #526: ike-base-parent carries its own
+             self-pin plus the external-dependency matrix (test
+             stack, Eclipse Collections, logging, Maven plugins)
+             that every foundation tier needs. The IKE-foundation
+             version pins (ike-tooling, ike-docs, ike-platform,
+             etc.) moved to ike-parent — that's the consumer
+             registry, not the upstream-of-all parent. -->
 
-        <!-- IKE foundation (Tier 0 / Tier 1) -->
-        <network.ike__GA__ike-base-parent__VERSION>13</network.ike__GA__ike-base-parent__VERSION>
-        <network.ike__GA__ike-java-support__VERSION>6</network.ike__GA__ike-java-support__VERSION>
-        <network.ike.tooling__GA__ike-tooling__VERSION>214</network.ike.tooling__GA__ike-tooling__VERSION>
-        <network.ike.tooling__GA__ike-workspace-extension__VERSION>7</network.ike.tooling__GA__ike-workspace-extension__VERSION>
-        <network.ike.tooling__GA__ike-version-management-extension__VERSION>6</network.ike.tooling__GA__ike-version-management-extension__VERSION>
-        <network.ike.docs__GA__ike-docs__VERSION>63</network.ike.docs__GA__ike-docs__VERSION>
-        <network.ike.platform__GA__ike-platform__VERSION>91</network.ike.platform__GA__ike-platform__VERSION>
-
-        <!-- ═══════════════════════════════════════════════════════
-             Release-policy defaults (IKE-Network/ike-issues#498)
-             ═══════════════════════════════════════════════════════
-
-             For each canonical version pin above, a paired
-             ${G__GA__A__POLICY} property declares how a consumer of
-             this parent reacts when that upstream releases. The
-             default `integrate` matches the historical behavior —
-             bump the pin in place, no human gate. Consumers
-             override per-upstream by redeclaring the property
-             locally.
-
-             The ReleasePolicy ladder (in network.ike:ike-java-support):
-               notify     log only
-               verify     log + verify the consumer still builds
-               propose    open a proposal branch with the bump
-               integrate  bump the pin (current implicit behavior)
-               release    bump + trigger the consumer's own release
-
-             ike-version-management-extension validates the value
-             against the enum at build time; an unrecognized value
-             fails the build with a "did you mean" hint.
-             ReleasePrep.alignUpstreamProperties dispatches on the
-             value at release time. -->
-        <network.ike__GA__ike-base-parent__POLICY>integrate</network.ike__GA__ike-base-parent__POLICY>
-        <network.ike__GA__ike-java-support__POLICY>integrate</network.ike__GA__ike-java-support__POLICY>
-        <network.ike.tooling__GA__ike-tooling__POLICY>integrate</network.ike.tooling__GA__ike-tooling__POLICY>
-        <network.ike.tooling__GA__ike-workspace-extension__POLICY>integrate</network.ike.tooling__GA__ike-workspace-extension__POLICY>
-        <network.ike.tooling__GA__ike-version-management-extension__POLICY>integrate</network.ike.tooling__GA__ike-version-management-extension__POLICY>
-        <network.ike.docs__GA__ike-docs__POLICY>integrate</network.ike.docs__GA__ike-docs__POLICY>
-        <network.ike.platform__GA__ike-platform__POLICY>integrate</network.ike.platform__GA__ike-platform__POLICY>
+        <!-- Self-pin — release-publish round-trips the literal in
+             at release time, restores the placeholder after the tag.
+             The self-pin's __ALIAS makes <ike-base-parent.version>
+             available to descendants via the auto-baked
+             indirection. -->
+        <network.ike__GA__ike-base-parent__VERSION>${project.version}</network.ike__GA__ike-base-parent__VERSION>
+        <network.ike__GA__ike-base-parent__ALIAS>ike-base-parent.version</network.ike__GA__ike-base-parent__ALIAS>
 
         <!-- Test stack -->
         <org.junit.jupiter__GA__junit-jupiter__VERSION>6.0.0</org.junit.jupiter__GA__junit-jupiter__VERSION>
+        <org.junit.jupiter__GA__junit-jupiter__ALIAS>junit-jupiter.version,junit.version</org.junit.jupiter__GA__junit-jupiter__ALIAS>
         <org.junit.jupiter__GA__junit-jupiter-api__VERSION>6.0.0</org.junit.jupiter__GA__junit-jupiter-api__VERSION>
         <org.junit.jupiter__GA__junit-jupiter-engine__VERSION>6.0.0</org.junit.jupiter__GA__junit-jupiter-engine__VERSION>
         <org.junit.jupiter__GA__junit-jupiter-params__VERSION>6.0.0</org.junit.jupiter__GA__junit-jupiter-params__VERSION>
         <org.junit__GA__junit-bom__VERSION>6.0.0</org.junit__GA__junit-bom__VERSION>
         <org.assertj__GA__assertj-core__VERSION>3.27.3</org.assertj__GA__assertj-core__VERSION>
+        <org.assertj__GA__assertj-core__ALIAS>assertj.version</org.assertj__GA__assertj-core__ALIAS>
         <org.mockito__GA__mockito-core__VERSION>5.14.2</org.mockito__GA__mockito-core__VERSION>
+        <org.mockito__GA__mockito-core__ALIAS>mockito.version</org.mockito__GA__mockito-core__ALIAS>
         <org.mockito__GA__mockito-junit-jupiter__VERSION>5.14.2</org.mockito__GA__mockito-junit-jupiter__VERSION>
 
-        <!-- Collections / utilities -->
-        <org.eclipse.collections__GA__eclipse-collections-api__VERSION>12.0.0</org.eclipse.collections__GA__eclipse-collections-api__VERSION>
-        <org.eclipse.collections__GA__eclipse-collections__VERSION>12.0.0</org.eclipse.collections__GA__eclipse-collections__VERSION>
-        <org.eclipse.collections__GA__eclipse-collections-forkjoin__VERSION>12.0.0</org.eclipse.collections__GA__eclipse-collections-forkjoin__VERSION>
+        <!-- Collections / utilities — Eclipse 13 (komet BOM alignment, #526) -->
+        <org.eclipse.collections__GA__eclipse-collections-api__VERSION>13.0.0</org.eclipse.collections__GA__eclipse-collections-api__VERSION>
+        <org.eclipse.collections__GA__eclipse-collections-api__ALIAS>eclipse-collections-api.version</org.eclipse.collections__GA__eclipse-collections-api__ALIAS>
+        <org.eclipse.collections__GA__eclipse-collections__VERSION>13.0.0</org.eclipse.collections__GA__eclipse-collections__VERSION>
+        <org.eclipse.collections__GA__eclipse-collections__ALIAS>eclipse-collections.version</org.eclipse.collections__GA__eclipse-collections__ALIAS>
+        <org.eclipse.collections__GA__eclipse-collections-forkjoin__VERSION>13.0.0</org.eclipse.collections__GA__eclipse-collections-forkjoin__VERSION>
 
         <!-- Logging -->
         <org.slf4j__GA__slf4j-api__VERSION>2.0.16</org.slf4j__GA__slf4j-api__VERSION>
+        <org.slf4j__GA__slf4j-api__ALIAS>slf4j.version</org.slf4j__GA__slf4j-api__ALIAS>
         <ch.qos.logback__GA__logback-classic__VERSION>1.5.18</ch.qos.logback__GA__logback-classic__VERSION>
+        <ch.qos.logback__GA__logback-classic__ALIAS>logback.version</ch.qos.logback__GA__logback-classic__ALIAS>
 
-        <!-- Maven plugins (canonical pins; ike-parent's
-             <pluginManagement> references these for the IKE
-             foundation's curated plugin matrix) -->
+        <!-- Maven plugins -->
         <org.apache.maven.plugins__GA__maven-compiler-plugin__VERSION>3.14.0</org.apache.maven.plugins__GA__maven-compiler-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-compiler-plugin__ALIAS>maven-compiler-plugin.version</org.apache.maven.plugins__GA__maven-compiler-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-surefire-plugin__VERSION>3.5.3</org.apache.maven.plugins__GA__maven-surefire-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-surefire-plugin__ALIAS>maven-surefire-plugin.version</org.apache.maven.plugins__GA__maven-surefire-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-failsafe-plugin__VERSION>3.5.3</org.apache.maven.plugins__GA__maven-failsafe-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-failsafe-plugin__ALIAS>maven-failsafe-plugin.version</org.apache.maven.plugins__GA__maven-failsafe-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-assembly-plugin__VERSION>3.7.1</org.apache.maven.plugins__GA__maven-assembly-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-assembly-plugin__ALIAS>maven-assembly-plugin.version</org.apache.maven.plugins__GA__maven-assembly-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-dependency-plugin__VERSION>3.9.0</org.apache.maven.plugins__GA__maven-dependency-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-dependency-plugin__ALIAS>maven-dependency-plugin.version</org.apache.maven.plugins__GA__maven-dependency-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-resources-plugin__VERSION>3.3.1</org.apache.maven.plugins__GA__maven-resources-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-resources-plugin__ALIAS>maven-resources-plugin.version</org.apache.maven.plugins__GA__maven-resources-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-source-plugin__VERSION>3.3.1</org.apache.maven.plugins__GA__maven-source-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-source-plugin__ALIAS>maven-source-plugin.version</org.apache.maven.plugins__GA__maven-source-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-javadoc-plugin__VERSION>3.11.2</org.apache.maven.plugins__GA__maven-javadoc-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-javadoc-plugin__ALIAS>maven-javadoc-plugin.version</org.apache.maven.plugins__GA__maven-javadoc-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-gpg-plugin__VERSION>3.2.8</org.apache.maven.plugins__GA__maven-gpg-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-gpg-plugin__ALIAS>maven-gpg-plugin.version</org.apache.maven.plugins__GA__maven-gpg-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-site-plugin__VERSION>3.21.0</org.apache.maven.plugins__GA__maven-site-plugin__VERSION>
+        <org.apache.maven.plugins__GA__maven-site-plugin__ALIAS>maven-site-plugin.version</org.apache.maven.plugins__GA__maven-site-plugin__ALIAS>
         <org.apache.maven.plugins__GA__maven-jar-plugin__VERSION>3.4.2</org.apache.maven.plugins__GA__maven-jar-plugin__VERSION>
         <org.apache.maven.plugins__GA__maven-clean-plugin__VERSION>3.4.0</org.apache.maven.plugins__GA__maven-clean-plugin__VERSION>
         <org.apache.maven.plugins__GA__maven-install-plugin__VERSION>3.1.3</org.apache.maven.plugins__GA__maven-install-plugin__VERSION>
         <org.apache.maven.plugins__GA__maven-deploy-plugin__VERSION>3.1.3</org.apache.maven.plugins__GA__maven-deploy-plugin__VERSION>
         <org.jreleaser__GA__jreleaser-maven-plugin__VERSION>1.24.0</org.jreleaser__GA__jreleaser-maven-plugin__VERSION>
-
-        <!-- ═══════════════════════════════════════════════════════
-             Legacy short-name aliases (one-line indirections)
-             ═══════════════════════════════════════════════════════
-
-             Consumers that use the wider-ecosystem short-name
-             idioms (junit-jupiter.version, maven-compiler-plugin.
-             version, etc.) keep working unchanged: each alias
-             indirects to its canonical typed-marker pin above.
-             Removing an alias is a future deprecation cycle, not
-             part of this release. -->
-
-        <!-- IKE foundation legacy short names -->
-        <ike-tooling.version>${network.ike.tooling__GA__ike-tooling__VERSION}</ike-tooling.version>
-        <ike-workspace-extension.version>${network.ike.tooling__GA__ike-workspace-extension__VERSION}</ike-workspace-extension.version>
-        <ike-version-management-extension.version>${network.ike.tooling__GA__ike-version-management-extension__VERSION}</ike-version-management-extension.version>
-        <ike-java-support.version>${network.ike__GA__ike-java-support__VERSION}</ike-java-support.version>
-        <ike-docs.version>${network.ike.docs__GA__ike-docs__VERSION}</ike-docs.version>
-        <ike-platform.version>${network.ike.platform__GA__ike-platform__VERSION}</ike-platform.version>
-
-        <!-- Test stack legacy short names -->
-        <junit-jupiter.version>${org.junit.jupiter__GA__junit-jupiter__VERSION}</junit-jupiter.version>
-        <junit.version>${org.junit.jupiter__GA__junit-jupiter__VERSION}</junit.version>
-        <assertj.version>${org.assertj__GA__assertj-core__VERSION}</assertj.version>
-        <mockito.version>${org.mockito__GA__mockito-core__VERSION}</mockito.version>
-
-        <!-- Collections / utilities legacy short names -->
-        <eclipse-collections.version>${org.eclipse.collections__GA__eclipse-collections__VERSION}</eclipse-collections.version>
-        <eclipse-collections-api.version>${org.eclipse.collections__GA__eclipse-collections-api__VERSION}</eclipse-collections-api.version>
-
-        <!-- Logging legacy short names -->
-        <slf4j.version>${org.slf4j__GA__slf4j-api__VERSION}</slf4j.version>
-        <logback.version>${ch.qos.logback__GA__logback-classic__VERSION}</logback.version>
-
-        <!-- Maven plugins legacy short names. Every Maven-plugin
-             canonical pin above gets a one-line indirection here
-             so existing references in this POM and downstream
-             consumers continue to resolve. -->
-        <maven-compiler-plugin.version>${org.apache.maven.plugins__GA__maven-compiler-plugin__VERSION}</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>${org.apache.maven.plugins__GA__maven-surefire-plugin__VERSION}</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>${org.apache.maven.plugins__GA__maven-failsafe-plugin__VERSION}</maven-failsafe-plugin.version>
-        <maven-assembly-plugin.version>${org.apache.maven.plugins__GA__maven-assembly-plugin__VERSION}</maven-assembly-plugin.version>
-        <maven-dependency-plugin.version>${org.apache.maven.plugins__GA__maven-dependency-plugin__VERSION}</maven-dependency-plugin.version>
-        <maven-resources-plugin.version>${org.apache.maven.plugins__GA__maven-resources-plugin__VERSION}</maven-resources-plugin.version>
-        <maven-source-plugin.version>${org.apache.maven.plugins__GA__maven-source-plugin__VERSION}</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>${org.apache.maven.plugins__GA__maven-javadoc-plugin__VERSION}</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>${org.apache.maven.plugins__GA__maven-gpg-plugin__VERSION}</maven-gpg-plugin.version>
-        <maven-site-plugin.version>${org.apache.maven.plugins__GA__maven-site-plugin__VERSION}</maven-site-plugin.version>
-        <jreleaser-maven-plugin.version>${org.jreleaser__GA__jreleaser-maven-plugin__VERSION}</jreleaser-maven-plugin.version>
+        <org.jreleaser__GA__jreleaser-maven-plugin__ALIAS>jreleaser-maven-plugin.version</org.jreleaser__GA__jreleaser-maven-plugin__ALIAS>
     </properties>
 
     <build>
@@ -300,7 +225,7 @@
             <plugins>
                 <!-- maven-assembly-plugin: version pin. The active
                      entry in <build><plugins> below activates the
-                     parent-only site-theme and aliases executions
+                     parent-only site-theme execution
                      (<inherited>false</inherited>). Descendants that
                      use maven-assembly-plugin for their own purposes
                      pick up this version via pluginManagement
@@ -308,7 +233,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>${maven-assembly-plugin.version}</version>
+                    <version>${org.apache.maven.plugins__GA__maven-assembly-plugin__VERSION}</version>
                 </plugin>
 
                 <!-- maven-resources-plugin: version pin. The active
@@ -319,7 +244,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>${maven-resources-plugin.version}</version>
+                    <version>${org.apache.maven.plugins__GA__maven-resources-plugin__VERSION}</version>
                 </plugin>
 
                 <!-- Maven Site — renders src/site/asciidoc/ into the
@@ -333,7 +258,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>${maven-site-plugin.version}</version>
+                    <version>${org.apache.maven.plugins__GA__maven-site-plugin__VERSION}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.sentrysoftware.maven</groupId>
@@ -382,7 +307,7 @@
                 <plugin>
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
-                    <version>${jreleaser-maven-plugin.version}</version>
+                    <version>${org.jreleaser__GA__jreleaser-maven-plugin__VERSION}</version>
                     <configuration>
                         <jreleaser>
                             <!-- Artifacts are signed by maven-gpg-plugin
@@ -452,24 +377,6 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/site-theme.xml</descriptor>
-                            </descriptors>
-                            <attach>true</attach>
-                            <appendAssemblyId>true</appendAssemblyId>
-                        </configuration>
-                    </execution>
-                    <!-- aliases: the IKE typed-marker family default
-                         manifest, shipped as a classified zip so
-                         external tooling can consume it as data
-                         without depending on
-                         ike-version-management-extension. See
-                         IKE-Network/ike-issues#470, #473, #525. -->
-                    <execution>
-                        <id>aliases</id>
-                        <phase>package</phase>
-                        <goals><goal>single</goal></goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/assembly/aliases.xml</descriptor>
                             </descriptors>
                             <attach>true</attach>
                             <appendAssemblyId>true</appendAssemblyId>
@@ -552,15 +459,16 @@
 
             <dependencies>
                 <!-- The classified site-theme zip lives on Maven
-                     Central at the most-recently-released
-                     ike-base-parent version (literal in the
-                     ${ike-base-parent.version} property above).
-                     Bumped per release; theme content rarely
-                     changes so one-cycle lag is acceptable. -->
+                     Central at the self-pin version. release-publish
+                     bakes the literal release version into the
+                     self-pin property at release time
+                     (IKE-Network/ike-issues#527), so descendants
+                     inheriting this profile fetch the current
+                     ike-base-parent's site-theme. -->
                 <dependency>
                     <groupId>network.ike</groupId>
                     <artifactId>ike-base-parent</artifactId>
-                    <version>${ike-base-parent.version}</version>
+                    <version>${network.ike__GA__ike-base-parent__VERSION}</version>
                     <classifier>site-theme</classifier>
                     <type>zip</type>
                     <scope>provided</scope>
@@ -572,7 +480,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>${maven-dependency-plugin.version}</version>
+                        <version>${org.apache.maven.plugins__GA__maven-dependency-plugin__VERSION}</version>
                         <executions>
                             <execution>
                                 <id>unpack-site-theme</id>
@@ -606,7 +514,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
+                        <version>${org.apache.maven.plugins__GA__maven-gpg-plugin__VERSION}</version>
                         <configuration>
                             <signer>bc</signer>
                         </configuration>
@@ -637,7 +545,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin.version}</version>
+                        <version>${org.apache.maven.plugins__GA__maven-source-plugin__VERSION}</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -648,7 +556,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
+                        <version>${org.apache.maven.plugins__GA__maven-javadoc-plugin__VERSION}</version>
                         <configuration>
                             <doclint>${ike.javadoc.doclint}</doclint>
                             <failOnWarnings>${ike.javadoc.failOnWarnings}</failOnWarnings>
