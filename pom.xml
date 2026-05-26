@@ -144,7 +144,7 @@
              The self-pin's __ALIAS makes <ike-base-parent.version>
              available to descendants via the auto-baked
              indirection. -->
-        <network.ike__GA__ike-base-parent__VERSION>15</network.ike__GA__ike-base-parent__VERSION>
+        <network.ike__GA__ike-base-parent__VERSION>${project.version}</network.ike__GA__ike-base-parent__VERSION>
         <network.ike__GA__ike-base-parent__ALIAS>ike-base-parent.version</network.ike__GA__ike-base-parent__ALIAS>
 
         <!-- Test stack -->
@@ -199,7 +199,7 @@
         <org.apache.maven.plugins__GA__maven-install-plugin__VERSION>3.1.3</org.apache.maven.plugins__GA__maven-install-plugin__VERSION>
         <org.apache.maven.plugins__GA__maven-deploy-plugin__VERSION>3.1.3</org.apache.maven.plugins__GA__maven-deploy-plugin__VERSION>
         <org.jreleaser__GA__jreleaser-maven-plugin__VERSION>1.24.0</org.jreleaser__GA__jreleaser-maven-plugin__VERSION>
-        <org.jreleaser__GA__jreleaser-maven-plugin__ALIAS>jreleaser-maven-plugin.version</org.jreleaser__GA__jreleaser-maven-plugin__ALIAS><ike-base-parent.version>${network.ike__GA__ike-base-parent__VERSION}</ike-base-parent.version><junit-jupiter.version>${org.junit.jupiter__GA__junit-jupiter__VERSION}</junit-jupiter.version><junit.version>${org.junit.jupiter__GA__junit-jupiter__VERSION}</junit.version><assertj.version>${org.assertj__GA__assertj-core__VERSION}</assertj.version><mockito.version>${org.mockito__GA__mockito-core__VERSION}</mockito.version><eclipse-collections-api.version>${org.eclipse.collections__GA__eclipse-collections-api__VERSION}</eclipse-collections-api.version><eclipse-collections.version>${org.eclipse.collections__GA__eclipse-collections__VERSION}</eclipse-collections.version><slf4j.version>${org.slf4j__GA__slf4j-api__VERSION}</slf4j.version><logback.version>${ch.qos.logback__GA__logback-classic__VERSION}</logback.version><maven-compiler-plugin.version>${org.apache.maven.plugins__GA__maven-compiler-plugin__VERSION}</maven-compiler-plugin.version><maven-surefire-plugin.version>${org.apache.maven.plugins__GA__maven-surefire-plugin__VERSION}</maven-surefire-plugin.version><maven-failsafe-plugin.version>${org.apache.maven.plugins__GA__maven-failsafe-plugin__VERSION}</maven-failsafe-plugin.version><maven-assembly-plugin.version>${org.apache.maven.plugins__GA__maven-assembly-plugin__VERSION}</maven-assembly-plugin.version><maven-dependency-plugin.version>${org.apache.maven.plugins__GA__maven-dependency-plugin__VERSION}</maven-dependency-plugin.version><maven-resources-plugin.version>${org.apache.maven.plugins__GA__maven-resources-plugin__VERSION}</maven-resources-plugin.version><maven-source-plugin.version>${org.apache.maven.plugins__GA__maven-source-plugin__VERSION}</maven-source-plugin.version><maven-javadoc-plugin.version>${org.apache.maven.plugins__GA__maven-javadoc-plugin__VERSION}</maven-javadoc-plugin.version><maven-gpg-plugin.version>${org.apache.maven.plugins__GA__maven-gpg-plugin__VERSION}</maven-gpg-plugin.version><maven-site-plugin.version>${org.apache.maven.plugins__GA__maven-site-plugin__VERSION}</maven-site-plugin.version><jreleaser-maven-plugin.version>${org.jreleaser__GA__jreleaser-maven-plugin__VERSION}</jreleaser-maven-plugin.version>
+        <org.jreleaser__GA__jreleaser-maven-plugin__ALIAS>jreleaser-maven-plugin.version</org.jreleaser__GA__jreleaser-maven-plugin__ALIAS>
     </properties>
 
     <build>
