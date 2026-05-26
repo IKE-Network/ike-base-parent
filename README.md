@@ -58,6 +58,6 @@ In dependency-direction order (upstream → downstream):
 | [ike-tooling](https://ike.network/ike-tooling/) | Maven plugins and workspace tooling |
 | [ike-docs](https://ike.network/ike-docs/) | Documentation plumbing |
 | [ike-workspace-extension](https://ike.network/ike-workspace-extension/) | Maven 4 build extension — prunes non-existent `<subprojects>` from workspace POMs before model validation |
-| [ike-version-management-extension](https://ike.network/ike-version-management-extension/) | Maven 4 build extension — implements the `${G·A}` (U+00B7) version-property convention and the release-policy validation rule |
+| [ike-version-management-extension](https://ike.network/ike-version-management-extension/) | Maven 4 build extension — implements the IKE typed-marker family (`${G__GA__A__VERSION}`, `${G__GA__A__POLICY}`) version-property convention and the release-policy validation rule |
 | [ike-platform](https://ike.network/ike-platform/) | Consumer parent (`ike-parent`), BOM, workspace plugin |
 | [ike-platform](https://ike.network/ike-platform/) | Consumer parent (`ike-parent`), BOM, workspace plugin |
