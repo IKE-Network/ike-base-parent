@@ -21,7 +21,7 @@
 
     <groupId>network.ike</groupId>
     <artifactId>ike-base-parent</artifactId>
-    <version>15</version>
+    <version>16-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>IKE Base Parent</name>
