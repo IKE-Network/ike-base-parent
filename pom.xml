@@ -125,11 +125,14 @@
 
              Hand-written legacy short-name indirection lines
              (e.g. <ike-base-parent.version>${...}</...>) are NOT
-             declared in this source pom. release-publish bakes
-             them into the deployed pom from the __ALIAS metadata
-             (IKE-Network/ike-issues#527 round-trip), and vm-ext
-             injects them at file-model stage for workspace builds
-             during the SNAPSHOT cycle.
+             declared in this source pom. ike-version-management-
+             extension (registered in .mvn/extensions.xml) injects
+             them at file-model stage from the __ALIAS metadata, and
+             Maven builds the consumer POM from that model, so every
+             deployed pom — snapshot or release — carries them
+             (IKE-Network/ike-issues#1094; supersedes the #527
+             release-time bake). The release flow verifies they are
+             present after its first install.
 
              Pin scope after #526: ike-base-parent carries its own
              self-pin plus the external-dependency matrix (test
@@ -142,7 +145,7 @@
         <!-- Self-pin — release-publish round-trips the literal in
              at release time, restores the placeholder after the tag.
              The self-pin's __ALIAS makes <ike-base-parent.version>
-             available to descendants via the auto-baked
+             available to descendants via the injected
              indirection. -->
         <network.ike__GA__ike-base-parent__VERSION>${project.version}</network.ike__GA__ike-base-parent__VERSION>
         <network.ike__GA__ike-base-parent__ALIAS>ike-base-parent.version</network.ike__GA__ike-base-parent__ALIAS>
