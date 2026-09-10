@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  IKE-Network — .mvn/extensions.xml
+
+  Maven build extensions loaded at Maven startup, before any goal
+  can run.
+
+  ike-version-management-extension runs on this POM's own file model
+  and injects the short-name alias indirections declared by the
+  __ALIAS properties below (IKE-Network/ike-issues#526). Maven builds
+  the consumer POM from that transformed model, so every deployed
+  ike-base-parent POM — snapshot or release — carries the
+  indirections without a release-time bake (IKE-Network/ike-issues#1094).
+
+  The version is a literal: Maven 4 does not interpolate POM
+  properties inside this file at extension-load time.
+-->
+<extensions xmlns="http://maven.apache.org/EXTENSIONS/1.2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/EXTENSIONS/1.2.0
+                                https://maven.apache.org/xsd/core-extensions-1.2.0.xsd">
+
+    <extension>
+        <groupId>network.ike.tooling</groupId>
+        <artifactId>ike-version-management-extension</artifactId>
+        <version>11</version>
+    </extension>
+
+</extensions>
