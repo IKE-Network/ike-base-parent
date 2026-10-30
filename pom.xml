@@ -97,13 +97,20 @@
              (e.g. ike-tooling sets failOnWarnings=true). -->
         <ike.javadoc.doclint>all,-missing</ike.javadoc.doclint>
         <ike.javadoc.failOnWarnings>false</ike.javadoc.failOnWarnings>
-        <!-- Opt in to Maven Central publishing through JReleaser.
-             ike-tooling, ike-docs, and ike-platform each declared
-             this property locally; promote to Tier 0 so external
-             standalone consumers default to Central too. Override
-             with -Dike.publishToCentral=false for an internal-only
-             release. -->
-        <ike.publishToCentral>true</ike.publishToCentral>
+        <!-- Maven Central publishing through JReleaser is OFF by
+             default (IKE-Network/ike-issues#1332). A release still
+             tags, deploys to Nexus and cuts its GitHub release;
+             Central is a deliberate promotion of a coherent set
+             behind a month-to-date budget, not a side effect of
+             every release. Sonatype's free tier allows 7 release
+             events, 1,167 files and 78 MB per organization per
+             calendar month; the cascade published 55 bundles,
+             10,188 files and 1.8 GB in October 2026. Opt in with
+             -Dike.publishToCentral=true for that promotion. A
+             repository inherits this value from the ike-base-parent
+             version it pins, so the default reaches it once its
+             parent pin moves to 17 or later. -->
+        <ike.publishToCentral>false</ike.publishToCentral>
 
         <!-- ═══════════════════════════════════════════════════════
              IKE typed-marker family — declarative-only registry
