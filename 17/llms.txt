@@ -1,0 +1,25 @@
+# IKE Base Parent
+
+> Tier 0 foundation parent for the IKE Network — the apex of the
+> parent inheritance forest, inherited by ike-tooling, ike-docs,
+> and ike-platform. Carries shared publishing metadata, GPG
+> signing, and Maven Central publishing configuration.
+
+## Documentation
+
+- [IKE Base Parent](https://ike.network/ike-base-parent/index.html.md)
+
+## Other
+
+
+## Reports
+
+- [Maven Coordinates](https://ike.network/ike-base-parent/dependency-info.html.md)
+- [Project Distribution Management](https://ike.network/ike-base-parent/distribution-management.html.md)
+- [Project Licenses](https://ike.network/ike-base-parent/licenses.html.md)
+- [Project Plugin Management](https://ike.network/ike-base-parent/plugin-management.html.md)
+- [Project Plugins](https://ike.network/ike-base-parent/plugins.html.md)
+- [Source Code Management](https://ike.network/ike-base-parent/scm.html.md)
+- [Project Summary](https://ike.network/ike-base-parent/summary.html.md)
+- [Project Team](https://ike.network/ike-base-parent/team.html.md)
+- [Project Information](https://ike.network/ike-base-parent/project-info.html.md)
