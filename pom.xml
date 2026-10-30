@@ -21,7 +21,7 @@
 
     <groupId>network.ike</groupId>
     <artifactId>ike-base-parent</artifactId>
-    <version>17-SNAPSHOT</version>
+    <version>17</version>
     <packaging>pom</packaging>
 
     <name>IKE Base Parent</name>
@@ -154,7 +154,7 @@
              The self-pin's __ALIAS makes <ike-base-parent.version>
              available to descendants via the injected
              indirection. -->
-        <network.ike__GA__ike-base-parent__VERSION>${project.version}</network.ike__GA__ike-base-parent__VERSION>
+        <network.ike__GA__ike-base-parent__VERSION>17</network.ike__GA__ike-base-parent__VERSION>
         <network.ike__GA__ike-base-parent__ALIAS>ike-base-parent.version</network.ike__GA__ike-base-parent__ALIAS>
 
         <!-- Test stack -->
